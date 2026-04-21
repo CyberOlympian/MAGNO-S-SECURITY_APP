@@ -1,4 +1,4 @@
-name: DevSecOps Pipeline
+name: Cyber Olympian Pipeline
 
 on:
   push:
@@ -7,37 +7,47 @@ on:
     branches: [ main ]
 
 jobs:
-  devsecops-demo:
+  cyber-olympian-pipeline:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
+    steps:
+      # Step 1: Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
 
+      # Step 3: Install build tools and dependencies
       - name: Install build tools and dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install pip-audit pytest
           python -m pip install -r requirements.txt
 
+      # Step 4: Perform a dependency vulnerability scan
       - name: Dependency vulnerability scan
         run: python -m pip_audit -r requirements.txt
 
+      # Step 5: Run unit tests
       - name: Run unit tests
         run: python -m pytest
 
+      # Step 6: Build the Docker container image
       - name: Build container image
         run: docker build -t secure-app-demo .
 
-      - name: Scan container image
+      # Step 7: Scan the Docker image for vulnerabilities
+      - name: Scan container image for vulnerabilities
         uses: aquasecurity/trivy-action@v0.13.1
         with:
           image-ref: secure-app-demo:latest
           format: table
           severity: CRITICAL,HIGH
 
+      # Step 8: Deployment (this can be customized further)
       - name: Deployment
         run: echo "Deployment successful"
