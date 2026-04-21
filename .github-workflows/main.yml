@@ -33,7 +33,7 @@ jobs:
         run: python -m pip_audit -r requirements.txt
 
       # Step 5: Run unit tests using pytest
-      - name: Run unit tests
+      - name: Run unit test
         run: python -m pytest
 
       # Step 6: Build the Docker container image
