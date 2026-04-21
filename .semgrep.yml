@@ -1,0 +1,33 @@
+version: 1.0
+
+# Define which rules to run, specify the language of the code being scanned, and the severity level of findings.
+# You can specify custom rules or use the Semgrep rule registry for predefined rules.
+
+# Define the steps to be executed in the pipeline
+jobs:
+  semgrep-scan:
+    name: Run Semgrep Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set up Semgrep
+      - name: Set up Semgrep
+        uses: semgrep/action@v1
+
+      # Run Semgrep scan for security issues
+      - name: Run Semgrep
+        run: |
+          semgrep --config=auto --ignore 'tests/**' --severity=high --lang=python
+
+      # Upload the results to the GitHub checks API (optional)
+      - name: Upload Semgrep Results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: semgrep-results.sarif
+
+      # Optional: Fail the pipeline if issues are found
+      - name: Fail on issues
+        if: failure()
+        run: exit 1
